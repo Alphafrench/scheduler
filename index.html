@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Scheduler Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Weekly Scheduler Pro</h1>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="openModal()">➕ Add Activity</button>
+                <button class="btn btn-success" onclick="saveTemplate()">💾 Save Template</button>
+                <button class="btn btn-warning" onclick="loadTemplate()">📂 Load Template</button>
+                <button class="btn btn-danger" onclick="clearSchedule()">🗑️ Clear All</button>
+                <button class="btn btn-primary" onclick="toggleNotifications()">🔔 Notifications</button>
+            </div>
+            <div class="week-nav">
+                <button class="btn btn-primary" onclick="previousWeek()">← Previous</button>
+                <div class="week-display" id="weekDisplay"></div>
+                <button class="btn btn-primary" onclick="nextWeek()">Next →</button>
+            </div>
+        </div>
+
+        <div class="scheduler-container">
+            <div class="scheduler" id="scheduler"></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <!-- Activity Modal -->
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add New Activity</h2>
+            <form id="activityForm">
+                <div class="form-group">
+                    <label for="activityName">Activity Name:</label>
+                    <input type="text" id="activityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityCategory">Category:</label>
+                    <select id="activityCategory" required>
+                        <option value="classes">Classes</option>
+                        <option value="workouts">Workouts</option>
+                        <option value="meals">Meals</option>
+                        <option value="study">Study</option>
+                        <option value="work">Work</option>
+                        <option value="free-time">Free Time</option>
+                        <option value="relax-time">Relax Time</option>
+                        <option value="reading">Reading</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="activityDay">Day:</label>
+                    <select id="activityDay" required>
+                        <option value="0">Monday</option>
+                        <option value="1">Tuesday</option>
+                        <option value="2">Wednesday</option>
+                        <option value="3">Thursday</option>
+                        <option value="4">Friday</option>
+                        <option value="5">Saturday</option>
+                        <option value="6">Sunday</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="startTime">Start Time:</label>
+                    <input type="time" id="startTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="endTime">End Time:</label>
+                    <input type="time" id="endTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityNotes">Notes:</label>
+                    <textarea id="activityNotes" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reminderTime">Reminder (minutes before):</label>
+                    <select id="reminderTime">
+                        <option value="0">No reminder</option>
+                        <option value="15" selected>15 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Save Activity</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="deleteBtn" onclick="deleteActivity()" style="display:none;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+    <script src="script.js"></script>
+</body>
+</html>
