@@ -193,32 +193,48 @@ class WeeklyScheduler {
         document.getElementById('activityModal').style.display = 'block';
     }
 
-    saveActivity(formData) {
-        const activity = {
-            name: formData.get('name'),
-            category: formData.get('category'),
-            day: parseInt(formData.get('day')),
-            startTime: formData.get('startTime'),
-            endTime: formData.get('endTime'),
-            notes: formData.get('notes'),
-            reminderTime: parseInt(formData.get('reminderTime'))
-        };
+saveActivity(formData) {
+    const activity = {
+        name: formData.get('name'),
+        category: formData.get('category'),
+        day: parseInt(formData.get('day')),
+        startTime: formData.get('startTime'),
+        endTime: formData.get('endTime'),
+        notes: formData.get('notes'),
+        reminderTime: parseInt(formData.get('reminderTime'))
+    };
 
-        if (this.editingActivity !== null) {
-            this.activities[this.editingActivity] = activity;
-            this.showNotification('Activity updated successfully!');
-        } else {
-            this.activities.push(activity);
-            this.showNotification('Activity added successfully!');
-        }
-
-        this.saveToStorage();
-        this.renderScheduler();
-        this.updateStats();
-        this.scheduleNotifications();
-        this.closeModal();
+    // Validate time format
+    if (!this.isValidTimeFormat(activity.startTime) || !this.isValidTimeFormat(activity.endTime)) {
+        this.showNotification('Invalid time format!');
+        return;
     }
 
+    // Validate end time is after start time
+    if (this.timeToMinutes(activity.endTime) <= this.timeToMinutes(activity.startTime)) {
+        this.showNotification('End time must be after start time!');
+        return;
+    }
+
+    if (this.editingActivity !== null) {
+        this.activities[this.editingActivity] = activity;
+        this.showNotification('Activity updated successfully!');
+    } else {
+        this.activities.push(activity);
+        this.showNotification('Activity added successfully!');
+    }
+
+    this.saveToStorage();
+    this.renderScheduler();
+    this.updateStats();
+    this.scheduleNotifications();
+    this.closeModal();
+}
+
+// Add this helper method to validate time format
+isValidTimeFormat(time) {
+    return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time);
+}
     deleteActivity() {
         if (this.editingActivity !== null) {
             this.activities.splice(this.editingActivity, 1);
@@ -412,14 +428,28 @@ const scheduler = new WeeklyScheduler();
 // Event handlers
 document.getElementById('activityForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
     const formData = new FormData();
-    formData.append('name', document.getElementById('activityName').value);
-    formData.append('category', document.getElementById('activityCategory').value);
-    formData.append('day', document.getElementById('activityDay').value);
-    formData.append('startTime', document.getElementById('startTime').value);
-    formData.append('endTime', document.getElementById('endTime').value);
-    formData.append('notes', document.getElementById('activityNotes').value);
-    formData.append('reminderTime', document.getElementById('reminderTime').value);
+    const activityName = document.getElementById('activityName').value;
+    const category = document.getElementById('activityCategory').value;
+    const day = document.getElementById('activityDay').value;
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    const notes = document.getElementById('activityNotes').value;
+    const reminderTime = document.getElementById('reminderTime').value;
+
+    if (!activityName || !category || !day || !startTime || !endTime) {
+        scheduler.showNotification('Please fill in all required fields!');
+        return;
+    }
+
+    formData.append('name', activityName);
+    formData.append('category', category);
+    formData.append('day', day);
+    formData.append('startTime', startTime);
+    formData.append('endTime', endTime);
+    formData.append('notes', notes);
+    formData.append('reminderTime', reminderTime);
     
     scheduler.saveActivity(formData);
 });
